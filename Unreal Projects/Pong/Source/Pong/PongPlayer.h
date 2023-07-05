@@ -7,7 +7,7 @@
 #include "PongPlayer.generated.h"
 
 class UBoxComponent;
-class UCameraComponent;
+class UPlayerMovementComponent;
 
 UCLASS()
 class PONG_API APongPlayer : public APawn
@@ -28,10 +28,15 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 private:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* Mesh;
 
 	UPROPERTY(EditAnywhere)
 	UBoxComponent *BoxComponent;
+
+	class APongPlayerController *PlayerController;
+
+	
 };

@@ -13,5 +13,12 @@ UCLASS()
 class PONG_API APongPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+private:
+	
+	UPROPERTY(EditAnywhere)
+	float Speed{600};
+public:
+	void Tick(float DeltaTime) override;
+	void Move(float Value);
 	
 };
