@@ -7,6 +7,7 @@
 #include "PongPlayer.h"
 #include "Camera/CameraActor.h"
 #include "EngineUtils.h"
+#include "Blueprint/UserWidget.h"
 #include "GameFramework/PlayerStart.h"
 
 APongGameModeBase::APongGameModeBase()
@@ -21,6 +22,7 @@ void APongGameModeBase::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 	
+
 	if(Players[0] == nullptr || Players[1] == nullptr)
 	{
 		GetPawns();
@@ -28,6 +30,21 @@ void APongGameModeBase::PostLogin(APlayerController* NewPlayer)
 	
 	auto Player = Cast<APongPlayer>(Players[GetNumPlayers() - 1]);
 	NewPlayer->Possess(Player);
+	
+	if(LoadingScreenWidget == nullptr)
+	{
+		LoadingScreenWidget = CreateWidget(GetWorld(),LoadingScreenWidgetClass);
+	}
+	
+	if(LoadingScreenWidget != nullptr)
+	{
+		LoadingScreenWidget->AddToViewport();
+	}
+	
+	if(GetNumPlayers() == 2 && LoadingScreenWidget != nullptr)
+	{
+		LoadingScreenWidget->RemoveFromParent();
+	}
 }
 
 void APongGameModeBase::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId,FString& ErrorMessage)

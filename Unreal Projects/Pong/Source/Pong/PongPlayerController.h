@@ -22,6 +22,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	float Speed{600};
 
+	
 public:
 	APongPlayerController();
 	void Tick(float DeltaTime) override;

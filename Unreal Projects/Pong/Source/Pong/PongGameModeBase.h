@@ -23,4 +23,9 @@ private:
 	TArray<class APongPlayer*> Players;
 	int32 NumberOfPlayers{0};
 	void GetPawns();
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget> LoadingScreenWidgetClass;
+
+	class UUserWidget* LoadingScreenWidget;
 };
