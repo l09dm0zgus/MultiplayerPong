@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "PongPlayer.h"
 #include "Camera/CameraActor.h"
+#include "EngineUtils.h"
 #include "GameFramework/PlayerStart.h"
 
 APongGameModeBase::APongGameModeBase()
@@ -13,19 +14,37 @@ APongGameModeBase::APongGameModeBase()
 	DefaultPawnClass = APongPlayer::StaticClass();
 	PlayerControllerClass  = APongPlayerController::StaticClass();
 	bStartPlayersAsSpectators = true;
+	Players.Init(nullptr,2);
 }
 
 void APongGameModeBase::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 	
+	if(Players[0] == nullptr || Players[1] == nullptr)
+	{
+		GetPawns();
+	}
+	
+	auto Player = Cast<APongPlayer>(Players[GetNumPlayers() - 1]);
+	NewPlayer->Possess(Player);
+}
+
+void APongGameModeBase::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId,FString& ErrorMessage)
+{
+	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
+	if (GetNumPlayers() > 2)
+	{
+		ErrorMessage = "Player Rejected: Game Full";
+	}
 }
 
 AActor* APongGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 {
 	Super::ChoosePlayerStart_Implementation(Player);
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(),APlayerStart::StaticClass(),Pawns);
-	for(auto& Actor : Pawns)
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(),APlayerStart::StaticClass(),Actors);
+	for(auto& Actor : Actors)
 	{
 		auto PlayerStart = Cast<APlayerStart>(Actor);
 		if(PlayerStart != nullptr)
@@ -42,11 +61,14 @@ AActor* APongGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 
 void APongGameModeBase::GetPawns()
 {
+	TArray<AActor*>Actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(),APongPlayer::StaticClass(),Actors);
 	
-	Camera = Cast<ACameraActor>(UGameplayStatics::GetActorOfClass(GetWorld(),ACameraActor::StaticClass()));
-	if(Camera == nullptr)
+	if(Actors.Num() > 1)
 	{
-		return;
+		Players[0] = Cast<APongPlayer>(Actors[0]);
+		Players[1] = Cast<APongPlayer>(Actors[1]);
 	}
+	
 }
 
