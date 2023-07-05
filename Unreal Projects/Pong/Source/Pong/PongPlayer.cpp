@@ -12,7 +12,7 @@ APongPlayer::APongPlayer()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
-	
+	SetReplicatingMovement(true);
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
@@ -27,9 +27,6 @@ APongPlayer::APongPlayer()
 	RootComponent = BoxComponent;
 	Mesh->SetRelativeScale3D(FVector(0.6, 3.5, 0.4));
 	Mesh->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepRelativeTransform);
-
-	BoxComponent->SetIsReplicated(true);
-	Mesh->SetIsReplicated(true);
 }
 
 // Called when the game starts or when spawned
@@ -37,7 +34,6 @@ void APongPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	PlayerController = Cast<APongPlayerController>(GetController());
-	
 }
 
 // Called every frame

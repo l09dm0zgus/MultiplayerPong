@@ -2,6 +2,27 @@
 
 
 #include "PongPlayerController.h"
+#include "PongPlayer.h"
+#include "Net/UnrealNetwork.h"
+
+void APongPlayerController::MoveLaterally_Implementation(float Value)
+{
+	if (Value != 0.0f)
+	{
+		GetPawn()->AddMovementInput(GetPawn()->GetActorRightVector(), Value);
+	}
+}
+
+bool APongPlayerController::MoveLaterally_Validate(float Value)
+{
+	return true;
+}
+
+
+APongPlayerController::APongPlayerController()
+{
+	bReplicates = true;
+}
 
 void APongPlayerController::Tick(float DeltaTime)
 {
@@ -32,6 +53,15 @@ void APongPlayerController::Move(float Value)
 {
 	if (Value != 0.0f)
 	{
-		GetPawn()->AddMovementInput(GetPawn()->GetActorRightVector(), Value);
+		if (GetPawn()->GetLocalRole() != ROLE_Authority)
+		{
+			MoveLaterally(Value);
+			MoveLaterally_Implementation(Value);
+		}
+		else 
+		{
+			MoveLaterally(Value);
+		}
 	}
+	
 }
