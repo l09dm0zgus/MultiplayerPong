@@ -1,5 +1,9 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
-
-/Шаблон для шапки YouTube.png
+.vs
+.idea
+Binaries
+DerivedDataCache
+Intermediate
+Platforms
+Saved
+.vsconfig
+Pong.sln
