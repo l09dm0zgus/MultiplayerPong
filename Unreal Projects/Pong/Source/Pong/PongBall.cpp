@@ -8,16 +8,14 @@
 APongBall::APongBall()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	
+	bReplicates = true;
+
 	UStaticMesh* SphereMesh = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'")).Object;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
 	Mesh->SetStaticMesh(SphereMesh);
-
-	Mesh->SetNotifyRigidBodyCollision(true);
-	Mesh->OnComponentHit.AddDynamic(this, &APongBall::OnHit);	
-  
+	
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->UpdatedComponent = RootComponent;
 	ProjectileMovement->InitialSpeed = 0.0f;
@@ -31,16 +29,15 @@ APongBall::APongBall()
 
 	Mesh->SetSimulatePhysics(true);
 	Mesh->SetEnableGravity(false);
-	Mesh->SetConstraintMode(EDOFMode::XYPlane);
 }
 
 
 void APongBall::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Mesh->SetNotifyRigidBodyCollision(true);
+	Mesh->OnComponentHit.AddDynamic(this, &APongBall::OnHit);
 	SetReplicateMovement(true);
-	SetReplicates(true);
 }
 
 void APongBall::StartMoving_Implementation()

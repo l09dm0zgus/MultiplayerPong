@@ -13,7 +13,7 @@ class PONG_API ABallSpawnPosition : public AActor
 	
 public:	
 	ABallSpawnPosition();
-
+	void SpawnBall();
 protected:
 	virtual void BeginPlay() override;
 	

@@ -2,6 +2,8 @@
 
 
 #include "PongGameModeBase.h"
+
+#include "BallSpawnPosition.h"
 #include "PongPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "PongPlayer.h"
@@ -25,7 +27,7 @@ void APongGameModeBase::PostLogin(APlayerController* NewPlayer)
 
 	if(Players[0] == nullptr || Players[1] == nullptr)
 	{
-		GetPawns();
+		GetActors();
 	}
 	
 	auto Player = Cast<APongPlayer>(Players[GetNumPlayers() - 1]);
@@ -36,6 +38,10 @@ void APongGameModeBase::PostLogin(APlayerController* NewPlayer)
 	if(GetNumPlayers() == 2 && LoadingScreenWidget != nullptr)
 	{
 		LoadingScreenWidget->RemoveFromParent();
+		if(BallSpawnPosition != nullptr)
+		{
+			BallSpawnPosition->SpawnBall();
+		}
 	}
 }
 
@@ -83,7 +89,7 @@ void APongGameModeBase::BeginPlay()
 	}
 }
 
-void APongGameModeBase::GetPawns()
+void APongGameModeBase::GetActors()
 {
 	TArray<AActor*>Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(),APongPlayer::StaticClass(),Actors);
@@ -93,6 +99,6 @@ void APongGameModeBase::GetPawns()
 		Players[0] = Cast<APongPlayer>(Actors[0]);
 		Players[1] = Cast<APongPlayer>(Actors[1]);
 	}
-	
+	BallSpawnPosition = Cast<ABallSpawnPosition>(UGameplayStatics::GetActorOfClass(GetWorld(),ABallSpawnPosition::StaticClass()));
 }
 

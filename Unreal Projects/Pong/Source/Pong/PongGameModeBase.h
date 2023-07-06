@@ -23,10 +23,14 @@ protected:
 private:
 	TArray<class APongPlayer*> Players;
 	int32 NumberOfPlayers{0};
-	void GetPawns();
+	void GetActors();
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUserWidget> LoadingScreenWidgetClass;
 
+	UPROPERTY(VisibleAnywhere)
 	class UUserWidget* LoadingScreenWidget;
+
+	UPROPERTY(VisibleAnywhere)
+	class ABallSpawnPosition *BallSpawnPosition{nullptr};
 };
