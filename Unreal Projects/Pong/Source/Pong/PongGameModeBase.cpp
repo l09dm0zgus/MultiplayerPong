@@ -31,15 +31,7 @@ void APongGameModeBase::PostLogin(APlayerController* NewPlayer)
 	auto Player = Cast<APongPlayer>(Players[GetNumPlayers() - 1]);
 	NewPlayer->Possess(Player);
 	
-	if(LoadingScreenWidget == nullptr)
-	{
-		LoadingScreenWidget = CreateWidget(GetWorld(),LoadingScreenWidgetClass);
-	}
-	
-	if(LoadingScreenWidget != nullptr)
-	{
-		LoadingScreenWidget->AddToViewport();
-	}
+
 	
 	if(GetNumPlayers() == 2 && LoadingScreenWidget != nullptr)
 	{
@@ -74,6 +66,21 @@ AActor* APongGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 		}
 	}
 	return nullptr;
+}
+
+void APongGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if(LoadingScreenWidget == nullptr)
+	{
+		LoadingScreenWidget = CreateWidget(GetWorld(),LoadingScreenWidgetClass);
+	}
+	
+	if(LoadingScreenWidget != nullptr)
+	{
+		LoadingScreenWidget->AddToViewport();
+	}
 }
 
 void APongGameModeBase::GetPawns()

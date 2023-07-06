@@ -19,6 +19,7 @@ protected:
 	virtual void PostLogin(APlayerController * NewPlayer) override;
 	virtual void PreLogin(const FString & Options,const FString & Address,const FUniqueNetIdRepl & UniqueId,FString & ErrorMessage) override;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+	void BeginPlay() override;
 private:
 	TArray<class APongPlayer*> Players;
 	int32 NumberOfPlayers{0};
