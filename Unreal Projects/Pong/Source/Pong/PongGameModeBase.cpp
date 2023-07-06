@@ -9,13 +9,18 @@
 #include "PongPlayer.h"
 #include "Camera/CameraActor.h"
 #include "EngineUtils.h"
+#include "PongPlayerState.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/PlayerStart.h"
+#include "Net/UnrealNetwork.h"
 
 APongGameModeBase::APongGameModeBase()
 {
 	DefaultPawnClass = APongPlayer::StaticClass();
 	PlayerControllerClass  = APongPlayerController::StaticClass();
+	PlayerStateClass = APongPlayerState::StaticClass();
+	
+	bReplicates = true;
 	bStartPlayersAsSpectators = true;
 	Players.Init(nullptr,2);
 }
@@ -30,14 +35,12 @@ void APongGameModeBase::PostLogin(APlayerController* NewPlayer)
 		GetActors();
 	}
 	
-	auto Player = Cast<APongPlayer>(Players[GetNumPlayers() - 1]);
+	auto Player = Players[GetNumPlayers() - 1];
 	NewPlayer->Possess(Player);
-	
 
 	
-	if(GetNumPlayers() == 2 && LoadingScreenWidget != nullptr)
+	if(GetNumPlayers() == 2)
 	{
-		LoadingScreenWidget->RemoveFromParent();
 		if(BallSpawnPosition != nullptr)
 		{
 			BallSpawnPosition->SpawnBall();
@@ -77,16 +80,6 @@ AActor* APongGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 void APongGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if(LoadingScreenWidget == nullptr)
-	{
-		LoadingScreenWidget = CreateWidget(GetWorld(),LoadingScreenWidgetClass);
-	}
-	
-	if(LoadingScreenWidget != nullptr)
-	{
-		LoadingScreenWidget->AddToViewport();
-	}
 }
 
 void APongGameModeBase::GetActors()
@@ -98,6 +91,8 @@ void APongGameModeBase::GetActors()
 	{
 		Players[0] = Cast<APongPlayer>(Actors[0]);
 		Players[1] = Cast<APongPlayer>(Actors[1]);
+		Players[0]->Tags.Push("P1");
+		Players[1]->Tags.Push("P2");
 	}
 	BallSpawnPosition = Cast<ABallSpawnPosition>(UGameplayStatics::GetActorOfClass(GetWorld(),ABallSpawnPosition::StaticClass()));
 }

@@ -22,7 +22,6 @@ protected:
 
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 private:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* Mesh;
@@ -33,4 +32,5 @@ private:
 	class APongPlayerController *PlayerController;
 
 	
+
 };

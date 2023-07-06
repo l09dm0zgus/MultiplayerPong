@@ -3,7 +3,29 @@
 
 #include "PongPlayerController.h"
 #include "PongPlayer.h"
-#include "Net/UnrealNetwork.h"
+#include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
+
+
+void APongPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	if(LoadingScreenWidget == nullptr)
+	{
+		LoadingScreenWidget = CreateWidget( GetWorld(),LoadingScreenWidgetClass);
+	}
+	
+	if(LoadingScreenWidget != nullptr)
+	{
+		LoadingScreenWidget->AddToViewport();
+	}
+}
+
+APongPlayerController::APongPlayerController()
+{
+	bReplicates = true;
+}
 
 void APongPlayerController::MoveLaterally_Implementation(float Value)
 {
@@ -16,12 +38,6 @@ void APongPlayerController::MoveLaterally_Implementation(float Value)
 bool APongPlayerController::MoveLaterally_Validate(float Value)
 {
 	return true;
-}
-
-
-APongPlayerController::APongPlayerController()
-{
-	bReplicates = true;
 }
 
 void APongPlayerController::Tick(float DeltaTime)
@@ -46,7 +62,12 @@ void APongPlayerController::Tick(float DeltaTime)
 			}
 		}
 	}
-
+	
+	if(LoadingScreenWidget != nullptr && !bIsWidgetRemoved)
+	{
+		LoadingScreenWidget->RemoveFromParent();
+		bIsWidgetRemoved = true;
+	}
 }
 
 void APongPlayerController::Move(float Value)

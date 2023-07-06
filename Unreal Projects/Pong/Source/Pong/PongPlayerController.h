@@ -22,9 +22,18 @@ private:
 	UPROPERTY(EditAnywhere)
 	float Speed{600};
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget> LoadingScreenWidgetClass;
+
+	UPROPERTY(VisibleAnywhere)
+	class UUserWidget* LoadingScreenWidget;
+
+	bool bIsWidgetRemoved{false};
 	
+	void BeginPlay() override;
 public:
 	APongPlayerController();
+	
 	void Tick(float DeltaTime) override;
 	void Move(float Value);
 	

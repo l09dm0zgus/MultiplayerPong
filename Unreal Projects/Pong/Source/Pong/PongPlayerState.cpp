@@ -3,3 +3,7 @@
 
 #include "PongPlayerState.h"
 
+APongPlayerState::APongPlayerState()
+{
+	bReplicates = true;
+}

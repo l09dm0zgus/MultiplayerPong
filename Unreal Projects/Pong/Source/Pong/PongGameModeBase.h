@@ -15,6 +15,7 @@ class PONG_API APongGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 public:
 	APongGameModeBase();
+	
 protected:
 	virtual void PostLogin(APlayerController * NewPlayer) override;
 	virtual void PreLogin(const FString & Options,const FString & Address,const FUniqueNetIdRepl & UniqueId,FString & ErrorMessage) override;
@@ -25,12 +26,9 @@ private:
 	int32 NumberOfPlayers{0};
 	void GetActors();
 	
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UUserWidget> LoadingScreenWidgetClass;
-
-	UPROPERTY(VisibleAnywhere)
-	class UUserWidget* LoadingScreenWidget;
-
+	
 	UPROPERTY(VisibleAnywhere)
 	class ABallSpawnPosition *BallSpawnPosition{nullptr};
+
+	
 };

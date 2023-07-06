@@ -6,6 +6,10 @@
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "PongPlayerController.h"
+#include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Kismet/GameplayStatics.h"
+
 
 APongPlayer::APongPlayer()
 {
@@ -27,6 +31,8 @@ APongPlayer::APongPlayer()
 	
 	Mesh->SetRelativeScale3D(FVector(0.6, 3.5, 0.4));
 	Mesh->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepRelativeTransform);
+
+	
 }
 
 
@@ -34,6 +40,7 @@ void APongPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	PlayerController = Cast<APongPlayerController>(GetController());
+
 }
 
 void APongPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

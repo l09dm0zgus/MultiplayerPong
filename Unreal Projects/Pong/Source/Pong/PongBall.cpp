@@ -2,7 +2,13 @@
 
 
 #include "PongBall.h"
+
+#include "BallSpawnPosition.h"
+#include "PongGameModeBase.h"
+#include "PongPlayer.h"
+#include "GameFramework/PlayerState.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 APongBall::APongBall()
@@ -21,7 +27,7 @@ APongBall::APongBall()
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->UpdatedComponent = RootComponent;
 	ProjectileMovement->InitialSpeed = Speed;
-	ProjectileMovement->MaxSpeed = Speed * 10.0f;
+	ProjectileMovement->MaxSpeed = Speed;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
 	ProjectileMovement->Bounciness = 1.0f;
@@ -51,7 +57,62 @@ bool APongBall::StartMoving_Validate()
 
 void APongBall::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,FVector NormalImpulse, const FHitResult& Hit)
 {
-	
+	if(OtherActor->Tags.Num() > 0 && OtherActor->Tags[0] != FName(TEXT("P2")) &&  OtherActor->Tags[0] != FName(TEXT("P1")))
+	{
+		TArray<AActor*> Actors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(),APongPlayer::StaticClass(),Actors);
+		
+		if(OtherActor->Tags[0] == FName(TEXT("P1Gate")))
+		{
+			auto it = Actors.FindByPredicate([](const AActor *Actor)
+			{
+				return Actor->Tags.Num() != 0 && Actor->Tags[0] == FName(TEXT("P2"));
+			});
+
+			if(it != nullptr)
+			{
+				auto Player = Cast<APongPlayer>(*it);
+				
+				if(Player != nullptr)
+				{
+					auto CurrentScore = Player->GetPlayerState()->GetScore();
+					CurrentScore++;
+					Player->GetPlayerState()->SetScore(CurrentScore);
+				}
+			}
+			
+		
+		}
+		if(OtherActor->Tags[0] == FName(TEXT("P2Gate")))
+		{
+			auto *it = Actors.FindByPredicate([](const AActor *Actor)
+			{
+				return Actor->Tags.Num() != 0 && Actor->Tags[0] == FName(TEXT("P1"));
+			});
+
+			if(it != nullptr)
+			{
+				auto Player = Cast<APongPlayer>(*it);
+			
+				if(Player != nullptr)
+				{
+					auto CurrentScore = Player->GetPlayerState()->GetScore();
+					CurrentScore++;
+					Player->GetPlayerState()->SetScore(CurrentScore);
+				}
+			}
+			
+		}
+		
+		auto BallSpawner = Cast<ABallSpawnPosition>(UGameplayStatics::GetActorOfClass(GetWorld(),ABallSpawnPosition::StaticClass()));
+		if(BallSpawner != nullptr)
+		{
+			if(Destroy())
+			{
+				BallSpawner->SpawnBall();
+			}
+		}
+	}
 }
 
 
