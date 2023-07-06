@@ -13,37 +13,34 @@ APongBall::APongBall()
 	UStaticMesh* SphereMesh = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'")).Object;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	RootComponent = Mesh;
 	Mesh->SetStaticMesh(SphereMesh);
+	
+	RootComponent = Mesh;
+	
 	
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->UpdatedComponent = RootComponent;
-	ProjectileMovement->InitialSpeed = 0.0f;
-	ProjectileMovement->MaxSpeed = Speed;
+	ProjectileMovement->InitialSpeed = Speed;
+	ProjectileMovement->MaxSpeed = Speed * 10.0f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
 	ProjectileMovement->Bounciness = 1.0f;
 	ProjectileMovement->Friction = 0.0f;
-	ProjectileMovement->BounceVelocityStopSimulatingThreshold = 0.01f;
-	ProjectileMovement->ProjectileGravityScale = 0.f;
-
-	Mesh->SetSimulatePhysics(true);
-	Mesh->SetEnableGravity(false);
+	ProjectileMovement->ProjectileGravityScale = 5.0f;
 }
 
 
 void APongBall::BeginPlay()
 {
 	Super::BeginPlay();
-	Mesh->SetNotifyRigidBodyCollision(true);
 	Mesh->OnComponentHit.AddDynamic(this, &APongBall::OnHit);
 	SetReplicateMovement(true);
 }
 
 void APongBall::StartMoving_Implementation()
 {
-	auto RandomInitialDirection = UKismetMathLibrary::RandomBool();
-	auto MovementDirectionAfterSpawn = FVector(RandomInitialDirection ? 1.0 : -1.0, 0.0, 0.0);
+	const auto RandomInitialDirection = UKismetMathLibrary::RandomBool();
+	const auto MovementDirectionAfterSpawn = FVector( 0.0, 0.0,RandomInitialDirection ? 1.0 : -1.0);
 	Mesh->SetPhysicsLinearVelocity(MovementDirectionAfterSpawn * Speed);
 }
 
@@ -54,6 +51,7 @@ bool APongBall::StartMoving_Validate()
 
 void APongBall::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,FVector NormalImpulse, const FHitResult& Hit)
 {
+	
 }
 
 

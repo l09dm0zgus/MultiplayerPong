@@ -20,7 +20,7 @@ protected:
 
 private:
 	UPROPERTY(EditAnywhere)
-	float Speed{1000};
+	float Speed{1000.0f};
 	
 	UFUNCTION(Reliable, Server, WithValidation, Category = "PongBall")
 	void StartMoving();
